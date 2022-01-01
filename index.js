@@ -38,6 +38,7 @@ async function run (){
             const result = await collectionHeroUsers.insertOne(req.body);
             res.send(result)
         })
+        //check admin
         app.get('/adminCheck/:email', async(req, res)=> {
             const email = req.params.email
             const query = { email: email };
@@ -52,6 +53,16 @@ async function run (){
             }
             res.send(data)
         })
+
+        //get all users from admin dashboard 
+        app.get('/users', async(req, res)=> {
+            console.log(1)
+            const cursor = await collectionHeroUsers.find({}).toArray()
+            const users = cursor.filter(ele => ele.role !=='admin');
+            console.log(users)
+            res.send(users)
+        })
+
 
 
     }
