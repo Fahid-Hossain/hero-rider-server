@@ -3,11 +3,11 @@ const cors =require('cors');
 const { MongoClient } = require('mongodb');
 const fileUpload = require('express-fileupload')
 
-// app instance 
+// express init 
 const app = express();
 
 
-//apply middle were
+//set middleware
 app.use(cors());
 app.use(fileUpload())
 app.use(express.json());
@@ -80,19 +80,11 @@ async function run (){
             const encodedString = nidData.toString('base64');
             const nidBuffer = Buffer.from(encodedString,'base64');
 
-            //profile buffer
+            //buffer set the profle
             const pro = req.files.pro;
             const proData = pro.data;
             const encodedStringPro = proData.toString('base64');
             const proBuffer = Buffer.from(encodedStringPro,'base64');
-
-            //  driving pic buffer
-            //  const drive = req.files.driving;
-            //  const driveData = drive.data;
-            //  const encodedStringdrive = driveData.toString('base64');
-            //  const driveBuffer = Buffer.from(encodedStringdrive,'base64');
-
-
 
 
             const fileData ={
@@ -103,7 +95,6 @@ async function run (){
             const result = await collectionUsersMultimedia.insertOne(fileData);
             res.send(result)
             
-
 
         })
 
