@@ -1,6 +1,7 @@
 const express = require('express');
 const cors =require('cors');
 const { MongoClient } = require('mongodb');
+const fileUpload = require('express-fileupload')
 
 // app instance 
 const app = express();
@@ -8,6 +9,7 @@ const app = express();
 
 //apply middle were
 app.use(cors());
+app.use(fileUpload())
 app.use(express.json());
 
 // process env require
@@ -29,9 +31,10 @@ async function run (){
         // create data base collections
 
 
-        //dataBase for all users
+        //dataBase collection for all users
         const collectionHeroUsers = heroRiderDatabase.collection("collection-hero-users");
-
+        //database collection for user multimedia 
+        const collectionUsersMultimedia = heroRiderDatabase.collection("collection-hero-multimedia");
         //add the user to data base here api 
         app.post('/addUser', async(req, res)=> {
             console.log(req.body)
@@ -61,6 +64,47 @@ async function run (){
             const users = cursor.filter(ele => ele.role !=='admin');
             console.log(users)
             res.send(users)
+        })
+
+        // post the all file data from here 
+
+        app.post('/fileUpload', async(req, res)=> {
+           
+            console.log(1)
+            console.log(req.body);
+            console.log(req.files);
+            const email = req.body.email;
+            //nid buffer
+            const nid = req.files.nid;
+            const nidData = nid.data;
+            const encodedString = nidData.toString('base64');
+            const nidBuffer = Buffer.from(encodedString,'base64');
+
+            //profile buffer
+            const pro = req.files.pro;
+            const proData = pro.data;
+            const encodedStringPro = proData.toString('base64');
+            const proBuffer = Buffer.from(encodedStringPro,'base64');
+
+            //  driving pic buffer
+            //  const drive = req.files.driving;
+            //  const driveData = drive.data;
+            //  const encodedStringdrive = driveData.toString('base64');
+            //  const driveBuffer = Buffer.from(encodedStringdrive,'base64');
+
+
+
+
+            const fileData ={
+                email, nidBuffer, proBuffer
+
+            }
+            console.log(fileData);
+            const result = await collectionUsersMultimedia.insertOne(fileData);
+            res.send(result)
+            
+
+
         })
 
 
